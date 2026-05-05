@@ -24,14 +24,20 @@ export const useTable = (users: User[]) => {
     },
   ];
 
+  // users with preserved date on server and client sides
+  const stableUsers = useState<User[]>("table-users", () =>
+    users.map((user, i) => ({
+      ...user,
+      createdAt: new Date(Date.now() - i * 1000 * 60 * 60 * 24).toISOString(),
+    }))
+  );
+
   const tableBody = computed(() => {
-    return users.map(user => {
-      return tableHead.map(head => {
-        return {
-          name: user[head.slug as keyof User],
-          slug: head.slug,
-        };
-      });
+    return stableUsers.value.map(user => {
+      return tableHead.map(head => ({
+        name: user[head.slug as keyof User],
+        slug: head.slug,
+      }));
     });
   });
 
