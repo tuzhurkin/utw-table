@@ -6,13 +6,13 @@
       @input="$emit('update:search', $event.target.value)"
     />
 
-    <BaseSelect
+    <BasedSelect
       :model-value="role"
       :options="['admin', 'manager', 'user']"
       @update:model-value="$emit('update:role', $event)"
     />
 
-    <BaseSelect
+    <BasedSelect
       :model-value="perPage"
       :options="[10, 15, 20]"
       @update:model-value="$emit('update:perPage', Number($event))"
@@ -25,13 +25,9 @@ defineProps({
   search: String,
   role: String,
   perPage: Number,
-})
+});
 
-defineEmits([
-  'update:search',
-  'update:role',
-  'update:perPage',
-])
+defineEmits(["update:search", "update:role", "update:perPage"]);
 </script>
 
 <style scoped>

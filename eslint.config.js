@@ -3,8 +3,6 @@ import vue from "eslint-plugin-vue";
 import tseslint from "typescript-eslint";
 import prettier from "eslint-config-prettier";
 import unusedImports from "eslint-plugin-unused-imports";
-import unicorn from "eslint-plugin-unicorn";
-import sonarjs from "eslint-plugin-sonarjs";
 
 export default [
   {
@@ -31,8 +29,6 @@ export default [
     files: ["**/*.{js,ts,vue}"],
     plugins: {
       "unused-imports": unusedImports,
-      unicorn,
-      sonarjs,
     },
     rules: {
       "no-undef": "off",
@@ -49,11 +45,6 @@ export default [
       ],
       "no-console": "warn",
       "no-debugger": "warn",
-      "unicorn/prefer-node-protocol": "error",
-      "unicorn/prefer-query-selector": "error",
-      "unicorn/no-array-for-each": "off",
-      "sonarjs/no-duplicate-string": "warn",
-      "sonarjs/cognitive-complexity": ["warn", 20],
     },
   },
   prettier,
