@@ -1,0 +1,72 @@
+@use "vars" as *;
+@use "mixins" as *;
+
+*,
+*:before,
+*:after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body,
+html {
+  min-width: 320px;
+  font-family: $main-font;
+  font-style: normal;
+  font-weight: 500;
+  color: $color-black;
+  background-color: $color-white;
+  font-size: 20px;
+  line-height: 150%;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  @media (max-width: $md) {
+    font-size: 18px;
+  }
+}
+
+img {
+  max-width: 100%;
+}
+
+input,
+button,
+textarea {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+input {
+  // hide arrows for number input
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  &[type="number"] {
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+}
+
+button {
+  outline: none;
+}
+
+ul,
+ol {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+.router-link-active {
+  cursor: default;
+}
