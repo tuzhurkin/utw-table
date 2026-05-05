@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   devtools: {
     enabled: true,
   },
-  css: ["@/assets/styles/main.scss"],
+  css: ["@/assets/styles/main.scss", "@/assets/styles/table.scss"],
   vite: {
     css: {
       preprocessorOptions: {

@@ -1,7 +1,6 @@
 <template>
   <input
     :id="idx"
-    ref="input"
     :name="name"
     :type="type"
     :autocomplete="autocomplete"
