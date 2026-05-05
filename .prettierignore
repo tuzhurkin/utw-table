@@ -1,0 +1,10 @@
+node_modules
+dist
+.output
+.nuxt
+coverage
+public
+static
+package-lock.json
+*.min.js
+*.min.css

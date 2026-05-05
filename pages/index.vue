@@ -2,10 +2,10 @@
   <UserFilters
     :search="search"
     :role="role"
-    :perPage="perPage"
+    :per-page="perPage"
     @update:search="search = $event"
     @update:role="role = $event"
-    @update:perPage="perPage = $event"
+    @update:per-page="perPage = $event"
   />
 
   <UserTable
@@ -15,8 +15,8 @@
 
   <div class="pagination">
     <button
-      @click="page--"
       :disabled="page === 1"
+      @click="page--"
     >
       Prev
     </button>
@@ -24,8 +24,8 @@
     <span>{{ page }} / {{ totalPages }}</span>
 
     <button
-      @click="page++"
       :disabled="page === totalPages"
+      @click="page++"
     >
       Next
     </button>

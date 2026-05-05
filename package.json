@@ -1,17 +1,43 @@
 {
-  "name": "test-nuxt-3-uptowin",
+  "name": "utw-table",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "dev": "nuxt dev",
     "build": "nuxt build",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "prepare": "husky",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:types": "vue-tsc --noEmit",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "dependencies": {
     "nuxt": "^4.2.2",
     "vue": "^3.5.26",
     "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "typescript-eslint": "^8.0.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "vue-eslint-parser": "^10.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
+    "eslint-plugin-unicorn": "^53.0.0",
+    "eslint-plugin-sonarjs": "^3.0.0",
+    "typescript": "^5.0.0",
+    "vue-tsc": "^2.0.0",
+    "husky": "^9.0.0",
+    "lint-staged": "^16.0.0"
   }
 }
