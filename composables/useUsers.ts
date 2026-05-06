@@ -42,8 +42,9 @@ export function useUsers(rawUsers: User[]) {
       value: "",
       idx: "name",
       name: "name",
-      placeholder: "Search by name",
+      placeholder: "Search by name or email",
       filterType: "search",
+      searchFields: ["name", "email"],
     },
     {
       value: "",
@@ -82,14 +83,24 @@ export function useUsers(rawUsers: User[]) {
 
         // if filter type is select
         const filterItem = filtersData.value.find(f => f.idx === key);
-        if (filterItem && filterItem.filterType === "select") {
+        if (filterItem?.filterType === "select") {
           return String(user[key as keyof User] || "") === String(value);
         }
 
-        // by default, filter users by checking substring
+        // if filter type is search with multiple fields
+        const searchQuery = String(value).toLowerCase();
+        if (filterItem?.searchFields?.length) {
+          return filterItem.searchFields.some(field =>
+            String(user[field as keyof User] || "")
+              .toLowerCase()
+              .includes(searchQuery)
+          );
+        }
+
+        // if filter type is search with single field
         return String(user[key as keyof User] || "")
           .toLowerCase()
-          .includes(String(value).toLowerCase());
+          .includes(searchQuery);
       });
     });
   });

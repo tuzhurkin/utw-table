@@ -18,6 +18,7 @@ export type TableData = {
 };
 
 export type Role = "admin" | "manager" | "user";
+
 export type User = {
   id: number;
   name: string;
@@ -40,6 +41,7 @@ export type Filter = {
   name: string;
   placeholder: string;
   filterType: "search" | "select";
+  searchFields?: string[];
   options?: {
     value: string | number;
     text: string | number;
