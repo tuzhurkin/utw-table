@@ -32,11 +32,12 @@ export type BaseInput = {
 export type BaseSearch = {
   idx: string;
   name: string;
-  type: BaseInputType;
+  type?: BaseInputType;
   modelValue: BaseInputValue;
   placeholder: string;
-  autocomplete: string;
-  disabled: boolean;
+  autocomplete?: string;
+  disabled?: boolean;
+  loading?: boolean;
 };
 
 // select types

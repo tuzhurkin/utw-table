@@ -12,32 +12,29 @@
       @focus="focus"
       @blur="blur"
     />
-    <Transition name="clear">
+    <Transition name="action">
+      <BaseLoading v-if="loading" class="loading" />
+    </Transition>
+    <Transition name="action">
       <div v-show="!!modelValue" class="clear-btn">
         <BaseButton type="texted" icon="close" @click="onClearButtonClick" />
       </div>
     </Transition>
-    <!-- <BaseButton
-      type="primary yellow"
-      icon="search"
-      class="search-btn"
-      :disabled="!modelValue"
-      @click="onSearchButtonClick"
-    /> -->
   </label>
 </template>
 
 <script setup lang="ts">
-import type { BaseInputType, BaseInputValue } from "~/types/base";
+import type { BaseInputValue, BaseInputType } from "~/types/base";
 
 type BaseSearchProps = {
   idx: string;
   name: string;
+  type?: BaseInputType;
   modelValue: BaseInputValue;
   placeholder: string;
-  type?: BaseInputType;
   autocomplete?: string;
   disabled?: boolean;
+  loading?: boolean;
 };
 
 defineOptions({
@@ -52,6 +49,7 @@ const props = withDefaults(defineProps<BaseSearchProps>(), {
   placeholder: "",
   autocomplete: "off",
   disabled: false,
+  loading: false,
 });
 
 const emit = defineEmits<{
@@ -79,10 +77,6 @@ const onClearButtonClick = () => {
   emit("update:model-value", "", props.idx);
 };
 
-// const onSearchButtonClick = () => {
-//   emit("search", props.modelValue);
-// };
-
 watch(
   () => props.modelValue,
   value => {
@@ -92,12 +86,12 @@ watch(
 </script>
 
 <style scoped lang="scss">
-.clear-enter-active,
-.clear-leave-active {
+.action-enter-active,
+.action-leave-active {
   transition: opacity 0.1s ease;
 }
-.clear-enter-from,
-.clear-leave-to {
+.action-enter-from,
+.action-leave-to {
   opacity: 0;
 }
 
@@ -116,8 +110,7 @@ watch(
 
   :deep(input) {
     height: 56px;
-    // padding: 8px 60px 8px 24px;
-    padding: 8px 24px;
+    padding: 8px 88px 8px 24px;
     border-radius: 50px;
     color: $color-grey-200;
     border: 2px solid $color-yellow;
@@ -125,9 +118,21 @@ watch(
     transition: border-color $transition ease;
   }
 
+  :deep(.loading) {
+    position: absolute;
+    right: 56px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
   .clear-btn {
     position: absolute;
-    right: 20px; // 90px;
+    right: 20px;
     top: 50%;
     transform: translate(0, -50%);
     display: flex;
@@ -145,21 +150,6 @@ watch(
       .icon {
         width: 20px;
         height: 20px;
-      }
-    }
-  }
-
-  :deep(.search-btn) {
-    width: 56px;
-    height: 56px;
-    padding: 0;
-    border-radius: 50px;
-
-    .icon {
-      path,
-      rect,
-      circle {
-        stroke-width: 2;
       }
     }
   }
