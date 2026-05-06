@@ -1,5 +1,8 @@
 <template>
   <div class="project">
+    <div class="project-filters">
+      <Filters :filters="filtersData" />
+    </div>
     <div class="project-table">
       <ProjectTable :head="tableHead" :body="tableBody" />
     </div>
@@ -25,7 +28,18 @@ defineOptions({
   name: "Project",
 });
 
-const { paginatedUsers, page, perPage, totalPages, total, setPage, setPerPage } = useUsers(users);
+const {
+  page,
+  perPage,
+  totalPages,
+  total,
+  filtersData,
+  filters,
+  filteredUsers,
+  paginatedUsers,
+  setPage,
+  setPerPage,
+} = useUsers(users);
 const { tableHead, tableBody } = useTable(paginatedUsers);
 </script>
 
@@ -40,6 +54,10 @@ $color-bg-gradient: $color-grey-900;
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 250px;
+
+  .project-filters {
+    margin-top: 50px;
+  }
 
   .project-table {
     margin-bottom: 120px;

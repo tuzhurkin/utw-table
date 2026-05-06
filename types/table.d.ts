@@ -29,3 +29,19 @@ export type Pagination = {
   totalPages: number;
   total: number;
 };
+
+export type Filter = {
+  value: string | number;
+  idx: string;
+  name: string;
+  placeholder: string;
+  filterType: "search" | "select";
+  options?: {
+    value: string | number;
+    text: string | number;
+  }[];
+};
+
+export type Filters = {
+  [key: string]: Filter["value"];
+};

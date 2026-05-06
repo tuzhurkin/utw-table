@@ -38,7 +38,7 @@ td {
   height: 80px;
   padding: 0 16px;
   white-space: nowrap;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 16px;
   line-height: 150%;
   text-align: left;
@@ -70,4 +70,8 @@ td {
       border-right: 1px solid $color-grey-500;
     }
   }
+}
+
+th {
+  font-weight: 700;
 }

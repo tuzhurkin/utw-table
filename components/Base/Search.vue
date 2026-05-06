@@ -17,13 +17,13 @@
         <BaseButton type="texted" icon="close" @click="onClearButtonClick" />
       </div>
     </Transition>
-    <BaseButton
+    <!-- <BaseButton
       type="primary yellow"
       icon="search"
       class="search-btn"
       :disabled="!modelValue"
       @click="onSearchButtonClick"
-    />
+    /> -->
   </label>
 </template>
 
@@ -33,11 +33,11 @@ import type { BaseInputType, BaseInputValue } from "~/types/base";
 type BaseSearchProps = {
   idx: string;
   name: string;
-  type: BaseInputType;
   modelValue: BaseInputValue;
   placeholder: string;
-  autocomplete: string;
-  disabled: boolean;
+  type?: BaseInputType;
+  autocomplete?: string;
+  disabled?: boolean;
 };
 
 defineOptions({
@@ -55,14 +55,14 @@ const props = withDefaults(defineProps<BaseSearchProps>(), {
 });
 
 const emit = defineEmits<{
-  "update:model-value": [value: string | number | null, idx: string];
+  "update:model-value": [value: BaseInputValue, idx: string];
   focus: [];
   blur: [];
-  search: [value: string | number | null];
+  search: [value: BaseInputValue];
 }>();
 const focused = ref(false);
 
-const updateModelValue = (value: string | number | null) => {
+const updateModelValue = (value: BaseInputValue) => {
   emit("update:model-value", value, props.idx);
 };
 
@@ -79,9 +79,9 @@ const onClearButtonClick = () => {
   emit("update:model-value", "", props.idx);
 };
 
-const onSearchButtonClick = () => {
-  emit("search", props.modelValue);
-};
+// const onSearchButtonClick = () => {
+//   emit("search", props.modelValue);
+// };
 
 watch(
   () => props.modelValue,
@@ -116,7 +116,8 @@ watch(
 
   :deep(input) {
     height: 56px;
-    padding: 8px 60px 8px 24px;
+    // padding: 8px 60px 8px 24px;
+    padding: 8px 24px;
     border-radius: 50px;
     color: $color-grey-200;
     border: 2px solid $color-yellow;
@@ -126,7 +127,7 @@ watch(
 
   .clear-btn {
     position: absolute;
-    right: 90px;
+    right: 20px; // 90px;
     top: 50%;
     transform: translate(0, -50%);
     display: flex;

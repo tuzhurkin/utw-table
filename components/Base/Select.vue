@@ -40,11 +40,11 @@ type BaseSelectProps = {
   name: string;
   modelValue: BaseSelectValue;
   placeholder: string;
-  disabled: boolean;
-  options: BaseSelectOption[];
-  focused: boolean;
-  triggerText: string;
-  direction: BaseSelectDirection;
+  options?: BaseSelectOption[];
+  disabled?: boolean;
+  focused?: boolean;
+  triggerText?: string;
+  direction?: BaseSelectDirection;
 };
 
 defineOptions({
@@ -64,7 +64,7 @@ const props = withDefaults(defineProps<BaseSelectProps>(), {
 });
 
 const emit = defineEmits<{
-  "update:model-value": [value: BaseSelectValue];
+  "update:model-value": [value: BaseSelectValue, idx: string];
   change: [option: BaseSelectOption];
 }>();
 
@@ -94,7 +94,7 @@ const onClickOutside = () => {
 };
 
 const selectOption = (option: BaseSelectOption) => {
-  emit("update:model-value", option.value);
+  emit("update:model-value", option.value, props.idx);
   emit("change", option);
   open.value = false;
 };
