@@ -4,7 +4,7 @@
       <Filters :filters="filtersData" />
     </div>
     <div class="project-table">
-      <ProjectTable :head="tableHead" :body="tableBody" />
+      <ProjectTable :head="tableHead" :body="tableBody" @sort="onSorting" />
     </div>
     <div class="project-pagination">
       <Pagination
@@ -36,11 +36,18 @@ const {
   filtersData,
   filters,
   filteredUsers,
+  sortedUsers,
   paginatedUsers,
+  sortBy,
+  sortDirection,
+  onSorting,
   setPage,
   setPerPage,
 } = useUsers(users);
 const { tableHead, tableBody } = useTable(paginatedUsers);
+
+provide("sortBy", sortBy);
+provide("sortDirection", sortDirection);
 </script>
 
 <style scoped lang="scss">

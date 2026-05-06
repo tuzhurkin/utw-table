@@ -13,6 +13,7 @@ export const useTable = (users: MaybeRefOrGetter<User[]>) => {
     {
       name: "Age",
       slug: "age",
+      sortable: true,
     },
     {
       name: "Role",
@@ -21,6 +22,7 @@ export const useTable = (users: MaybeRefOrGetter<User[]>) => {
     {
       name: "Created At",
       slug: "createdAt",
+      sortable: true,
     },
   ];
 

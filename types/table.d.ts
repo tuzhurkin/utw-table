@@ -1,6 +1,9 @@
+export type SortDirection = "asc" | "desc";
+
 export type TableCell = {
   name: string | number;
   slug: string;
+  sortable?: boolean;
 };
 
 export type TableRow = {

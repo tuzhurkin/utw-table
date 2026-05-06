@@ -1,3 +1,4 @@
+import type { SortDirection } from "~/types/table";
 import type { User, Filter, Filters } from "~/types/table";
 
 export function useUsers(rawUsers: User[]) {
@@ -32,7 +33,7 @@ export function useUsers(rawUsers: User[]) {
     resetPage();
   };
 
-  // filters
+  // filtered users
   const filtersData = ref<Filter[]>([
     {
       value: "",
@@ -71,8 +72,8 @@ export function useUsers(rawUsers: User[]) {
     }, {} as Filters);
   });
 
-  const filteredUsers = computed(() => {
-    return users.value.filter(user => {
+  const filteredUsers = computed<User[]>(() => {
+    return users.value.filter((user: User) => {
       return Object.entries(filters.value).every(([key, value]) => {
         if (!value) return true;
 
@@ -94,17 +95,35 @@ export function useUsers(rawUsers: User[]) {
     resetPage();
   });
 
+  // sorted users
+  const sortBy = ref<string>("");
+  const sortDirection = ref<SortDirection>("asc");
+
+  const onSorting = (slug: string) => {
+    if (sortBy.value === slug) {
+      sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
+    } else {
+      sortBy.value = slug;
+      sortDirection.value = "asc";
+    }
+  };
+
+  const sortedUsers = computed<User[]>(() => {
+    return filteredUsers.value.toSorted((a: User, b: User) => {
+      return sortDirection.value === "asc"
+        ? a[sortBy.value as keyof User] < b[sortBy.value as keyof User]
+          ? -1
+          : 1
+        : a[sortBy.value as keyof User] > b[sortBy.value as keyof User]
+          ? -1
+          : 1;
+    });
+  });
+
+  // paginated users
   const start = computed(() => (page.value - 1) * perPage.value);
   const end = computed(() => start.value + perPage.value);
-  const paginatedUsers = computed(() => filteredUsers.value.slice(start.value, end.value));
-
-  // TODO:
-  // - filteredUsers
-  // - sortedUsers
-  // - paginatedUsers
-  // - totalPages
-  // const paginatedUsers = null;
-  // const totalPages = null;
+  const paginatedUsers = computed<User[]>(() => sortedUsers.value.slice(start.value, end.value));
 
   return {
     page,
@@ -114,7 +133,11 @@ export function useUsers(rawUsers: User[]) {
     filtersData,
     filters,
     filteredUsers,
+    sortedUsers,
     paginatedUsers,
+    sortBy,
+    sortDirection,
+    onSorting,
     setPage,
     setPerPage,
   };

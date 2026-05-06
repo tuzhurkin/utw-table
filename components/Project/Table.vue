@@ -2,7 +2,7 @@
   <div class="table">
     <Table>
       <template #head>
-        <TableRow :cells="head" :is-body="false" />
+        <TableRow :cells="head" :is-body="false" @sort="onSorting" />
       </template>
       <template #body>
         <TableRow v-for="(row, index) in body" :key="index" :cells="row" :is-body="true" />
@@ -21,6 +21,14 @@ defineOptions({
 });
 
 defineProps<ProjectTableProps>();
+
+const emit = defineEmits<{
+  sort: [slug: string];
+}>();
+
+const onSorting = (slug: string) => {
+  emit("sort", slug);
+};
 </script>
 
 <style scoped lang="scss">
