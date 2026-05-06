@@ -95,7 +95,7 @@ input {
   font-size: 16px;
   line-height: 120%;
   letter-spacing: -0.28px;
-  color: $color-black;
+  color: $color-grey-200;
   outline: none;
   border: none;
   background-color: transparent;

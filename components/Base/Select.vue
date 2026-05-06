@@ -2,7 +2,7 @@
   <div
     v-on-click-outside="onClickOutside"
     class="select"
-    :class="[{ active: open, focused, disabled }]"
+    :class="[{ active: open, focused, disabled }, direction]"
   >
     <div class="trigger" :tabindex="disabled ? -1 : 0" @click="toggle">
       <span class="value">{{ displayValue }}</span>
@@ -28,7 +28,12 @@
 
 <script setup lang="ts">
 import { vOnClickOutside } from "@vueuse/components";
-import type { BaseSelectOption, BaseSelectValue, OptionValue } from "~/types/base";
+import type {
+  BaseSelectValue,
+  BaseSelectOption,
+  OptionValue,
+  BaseSelectDirection,
+} from "~/types/base";
 
 type BaseSelectProps = {
   idx: string;
@@ -39,6 +44,7 @@ type BaseSelectProps = {
   options: BaseSelectOption[];
   focused: boolean;
   triggerText: string;
+  direction: BaseSelectDirection;
 };
 
 defineOptions({
@@ -54,6 +60,7 @@ const props = withDefaults(defineProps<BaseSelectProps>(), {
   modelValue: null,
   focused: false,
   triggerText: "",
+  direction: "bottom",
 });
 
 const emit = defineEmits<{
@@ -154,7 +161,7 @@ const selectOption = (option: BaseSelectOption) => {
   }
 
   &.top {
-    .options {
+    .options-box {
       top: auto;
       bottom: calc(100% + 8px);
     }

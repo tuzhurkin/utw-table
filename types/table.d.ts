@@ -22,3 +22,10 @@ export type User = {
   role: Role;
   createdAt: string;
 };
+
+export type Pagination = {
+  page: number;
+  perPage: number;
+  totalPages: number;
+  total: number;
+};

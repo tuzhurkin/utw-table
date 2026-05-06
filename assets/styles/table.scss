@@ -1,22 +1,24 @@
-// table {
-//   width: max-content;
-//   min-width: 100%;
-//   border-collapse: collapse;
-//   border-spacing: 0;
-// }
-
 table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0 8px;
 }
 
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  tr {
+    background-color: $color-grey-900;
+  }
+}
+
 tr {
   height: 80px;
   background-color: $color-grey-700;
 
-  td,
-  th {
+  td {
     &:first-child {
       border-top-left-radius: 18px;
       border-bottom-left-radius: 18px;

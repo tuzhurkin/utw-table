@@ -43,9 +43,10 @@ export type BaseSearch = {
 export type BaseSelectValue = string | number | null;
 export type BaseSelectOption = {
   value: BaseSelectValue;
-  text: string;
+  text: string | number;
 };
 export type OptionValue = BaseSelectOption["value"];
+export type BaseSelectDirection = "bottom" | "top";
 export type BaseSelect = {
   idx: string;
   name: string;
@@ -55,4 +56,5 @@ export type BaseSelect = {
   options: BaseSelectOption[];
   focused: boolean;
   triggerText: string;
+  direction: BaseSelectDirection;
 };
