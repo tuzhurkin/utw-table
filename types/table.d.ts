@@ -1,3 +1,4 @@
+export type SortBy = "age" | "createdAt";
 export type SortDirection = "asc" | "desc";
 
 export type TableCell = {
