@@ -1,7 +1,7 @@
 <template>
   <div class="project">
     <div class="project-filters">
-      <Filters :filters="filtersData" />
+      <Filters :filters="filtersData" :per-page="perPage" @update:per-page="setPerPage" />
     </div>
     <div ref="table" class="project-table">
       <ProjectTable :head="tableHead" :body="tableBody" :empty="isDataEmpty" @sort="onSorting" />
@@ -28,21 +28,19 @@ const {
   totalPages,
   isDataEmpty,
   filtersData,
-  filters,
-  filteredUsers,
-  sortedUsers,
   paginatedUsers,
   sortBy,
   sortDirection,
   onSorting,
   setPage,
+  setPerPage,
 } = useUsers(users);
 const { tableHead, tableBody } = useTable(paginatedUsers);
 
 provide("sortBy", sortBy);
 provide("sortDirection", sortDirection);
 
-// scroll to table top when page changes
+// scroll table to top when page changes
 const tableEl = useTemplateRef<HTMLDivElement>("table");
 watch(page, () => {
   tableEl.value?.scrollTo({ top: 0, behavior: "smooth" });

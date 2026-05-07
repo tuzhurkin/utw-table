@@ -6,3 +6,4 @@ export const SEARCH_OPTIONS = ["name", "email"];
 export const SORT_BY_OPTIONS = ["age", "createdAt"];
 export const SORT_DIRECTION = ["asc", "desc"];
 export const USER_FILTER_OPTIONS = ["name", "role"];
+export const SEARCH_DEBOUNCE_MS = 300;

@@ -31,7 +31,9 @@ export const useTable = (users: MaybeRefOrGetter<User[]>) => {
       return tableHead.map(head => ({
         name:
           head.slug === "createdAt"
-            ? new Date(user[head.slug as keyof User]).toLocaleDateString("en-GB", { timeZone: "UTC" })
+            ? new Date(user[head.slug as keyof User]).toLocaleDateString("en-GB", {
+                timeZone: "UTC",
+              })
             : user[head.slug as keyof User],
         slug: head.slug,
       }));

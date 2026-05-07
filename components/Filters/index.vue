@@ -15,18 +15,21 @@
         @update:model-value="onSelectUpdate"
       />
     </div>
+    <div class="filter">
+      <FiltersPerPage :per-page="perPage" @update:per-page="onPerPageUpdate" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import type { BaseInputValue, BaseSelectValue } from "~/types/base";
+import type { BaseSelectValue } from "~/types/base";
 import type { Filter } from "~/types/table";
+import { useSearchDebounce } from "~/composables/useSearchDebounce";
 
 type FiltersProps = {
   filters: Filter[];
+  perPage: number;
 };
-
-const SEARCH_DEBOUNCE_MS = 300;
 
 defineOptions({
   name: "Filters",
@@ -34,46 +37,12 @@ defineOptions({
 
 const props = defineProps<FiltersProps>();
 
+const emit = defineEmits<{
+  "update:perPage": [value: number];
+}>();
+
 const searchFilter = computed(() => props.filters.find(f => f.filterType === "search"));
-const searchInput = ref<BaseInputValue>(searchFilter.value?.value ?? "");
-const isSearching = ref(false);
-let debounceTimer: ReturnType<typeof setTimeout> | null = null;
-
-watch(
-  () => searchFilter.value?.value,
-  val => {
-    if (val !== undefined && val !== searchInput.value) {
-      searchInput.value = val;
-    }
-  }
-);
-
-const doSearch = (value: BaseInputValue, idx: string) => {
-  if (value === null || value === undefined) return;
-
-  const filter = props.filters.find(f => f.idx === idx);
-  if (filter) filter.value = value;
-  isSearching.value = false;
-  debounceTimer = null;
-};
-
-const onSearchInput = (value: BaseInputValue, idx: string) => {
-  if (value === null || value === undefined) return;
-
-  searchInput.value = value;
-  if (debounceTimer) clearTimeout(debounceTimer);
-  // no debounce on search clear
-  if (!value) {
-    doSearch(value, idx);
-    return;
-  }
-  isSearching.value = true;
-  debounceTimer = setTimeout(() => doSearch(value, idx), SEARCH_DEBOUNCE_MS);
-};
-
-onUnmounted(() => {
-  if (debounceTimer) clearTimeout(debounceTimer);
-});
+const { searchInput, isSearching, onSearchInput } = useSearchDebounce(searchFilter);
 
 const onSelectUpdate = (value: BaseSelectValue, idx: string) => {
   if (value === null || value === undefined) return;
@@ -83,6 +52,10 @@ const onSelectUpdate = (value: BaseSelectValue, idx: string) => {
     const option = filter.options.find(option => option.value === value);
     if (option) filter.value = option.value;
   }
+};
+
+const onPerPageUpdate = (value: number) => {
+  emit("update:perPage", value);
 };
 </script>
 
