@@ -1,10 +1,14 @@
 <template>
-  <th :title="String(value)" class="cell" :class="{ sortable }">
+  <th :title="String(value)" class="cell" :class="[slug, { sortable }]">
     <span>{{ value }}</span>
-    <template v-if="sortable && sortBy === slug">
-      <BaseIcon v-if="sortDirection === 'asc'" name="arrow-up" class="icon" />
-      <BaseIcon v-else-if="sortDirection === 'desc'" name="arrow-down" class="icon" />
-    </template>
+    <Transition name="icon-switch">
+      <BaseIcon
+        v-if="sortable && sortBy === slug"
+        name="arrow-up"
+        class="icon"
+        :class="{ active: sortDirection === 'desc' }"
+      />
+    </Transition>
   </th>
 </template>
 
@@ -29,4 +33,14 @@ const sortBy = inject("sortBy");
 const sortDirection = inject("sortDirection");
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.icon-switch-enter-active,
+.icon-switch-leave-active {
+  transition: opacity 0.15s ease;
+}
+
+.icon-switch-enter-from,
+.icon-switch-leave-to {
+  opacity: 0;
+}
+</style>

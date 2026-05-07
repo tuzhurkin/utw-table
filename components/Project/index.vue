@@ -3,8 +3,8 @@
     <div class="project-filters">
       <Filters :filters="filtersData" />
     </div>
-    <div class="project-table">
-      <ProjectTable :head="tableHead" :body="tableBody" @sort="onSorting" />
+    <div ref="table" class="project-table">
+      <ProjectTable :head="tableHead" :body="tableBody" :empty="isDataEmpty" @sort="onSorting" />
     </div>
     <div class="project-pagination">
       <Pagination :page="page" :total-pages="totalPages" :total="total" @update:page="setPage" />
@@ -24,8 +24,9 @@ defineOptions({
 const {
   page,
   perPage,
-  totalPages,
   total,
+  totalPages,
+  isDataEmpty,
   filtersData,
   filters,
   filteredUsers,
@@ -40,6 +41,12 @@ const { tableHead, tableBody } = useTable(paginatedUsers);
 
 provide("sortBy", sortBy);
 provide("sortDirection", sortDirection);
+
+// scroll to table top when page changes
+const tableEl = useTemplateRef<HTMLDivElement>("table");
+watch(page, () => {
+  tableEl.value?.scrollTo({ top: 0, behavior: "smooth" });
+});
 </script>
 
 <style scoped lang="scss">
@@ -52,14 +59,39 @@ $color-bg-gradient: $color-grey-900;
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 250px;
+  padding: 0 200px;
+
+  @media (max-width: $lg) {
+    padding: 0 56px;
+  }
+
+  @media (max-width: $md) {
+    row-gap: 16px;
+    padding: 0 16px;
+  }
 
   .project-filters {
-    margin-top: 50px;
+    margin-top: 32px;
+
+    @media (max-width: $sm) {
+      margin-top: 16px;
+    }
   }
 
   .project-table {
-    margin-bottom: 120px;
+    margin-bottom: 90px;
+    padding-bottom: 16px;
+    width: 100%;
+    max-height: calc(100vh - 210px); // = 32 + 32 + 56 + 90
+    overflow: auto;
+    @include noScrollbar;
+
+    @media (max-width: $md) {
+      margin-left: -16px;
+      margin-right: -16px;
+      width: calc(100% + 32px);
+      max-height: calc(100vh - 250px); // = 16 + 16 + 128 + 90
+    }
   }
 
   .project-pagination {
@@ -73,8 +105,16 @@ $color-bg-gradient: $color-grey-900;
     width: 100%;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 250px 16px;
+    padding: 0 200px 16px;
     background-color: $color-grey-900;
+
+    @media (max-width: $lg) {
+      padding: 0 56px 16px;
+    }
+
+    @media (max-width: $md) {
+      padding: 0 16px 16px;
+    }
 
     &::before {
       content: "";

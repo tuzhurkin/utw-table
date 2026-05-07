@@ -9,14 +9,8 @@
           @click="onPrevClick"
         />
       </div>
-      <div class="part count">
-        <PaginationPageCount
-          :current-page="page"
-          :total-pages="totalPages"
-          :total="total"
-          :disabled="total === 0"
-          @update:page="onPageChange"
-        />
+      <div class="part count" :class="{ disabled: total === 0 }">
+        <span>{{ page }} / {{ totalPages }}</span>
       </div>
       <div class="part arrow">
         <BaseButton
@@ -58,9 +52,6 @@ const isNextDisabled = computed(() => props.page === props.totalPages || props.t
 const onPrevClick = () => {
   emit("update:page", props.page - 1);
 };
-const onPageChange = (value: number) => {
-  emit("update:page", value);
-};
 const onNextClick = () => {
   emit("update:page", props.page + 1);
 };
@@ -87,6 +78,7 @@ const onNextClick = () => {
       display: flex;
       align-items: center;
       gap: 8px;
+      transition: opacity $transition ease;
 
       .btn {
         min-width: 36px;
@@ -96,6 +88,11 @@ const onNextClick = () => {
           width: 28px;
           height: 28px;
         }
+      }
+
+      &.disabled {
+        opacity: 0.5;
+        pointer-events: none;
       }
     }
   }

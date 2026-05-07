@@ -7,6 +7,7 @@ export type TableCell = {
   name: string | number;
   slug: string;
   sortable?: boolean;
+  colspan?: number;
 };
 
 export type TableRow = {

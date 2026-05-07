@@ -4,7 +4,6 @@
       idx="show-per-page"
       name="show-per-page"
       placeholder=""
-      :focused="false"
       :options="options"
       :model-value="perPage"
       direction="top"

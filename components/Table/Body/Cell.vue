@@ -1,5 +1,5 @@
 <template>
-  <td :title="String(value)" class="cell">
+  <td :title="String(value)" class="cell" :class="slug" :colspan="colspan">
     <span>{{ value }}</span>
   </td>
 </template>
@@ -11,10 +11,14 @@ defineOptions({
 
 type TableBodyCellProps = {
   value: string | number | boolean;
+  slug: string;
+  colspan?: number;
 };
 
 withDefaults(defineProps<TableBodyCellProps>(), {
   value: "",
+  slug: "",
+  colspan: 1,
 });
 </script>
 

@@ -89,12 +89,19 @@ const onSelectUpdate = (value: BaseSelectValue, idx: string) => {
 <style scoped lang="scss">
 .filters {
   display: flex;
-  align-items: center;
   gap: 16px;
+
+  @media (max-width: $sm) {
+    flex-wrap: wrap;
+  }
 
   .filter {
     &.search {
       flex: 2;
+
+      @media (max-width: $sm) {
+        flex-basis: 100%;
+      }
     }
     &.select {
       flex: 1;

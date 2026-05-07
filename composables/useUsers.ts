@@ -27,6 +27,7 @@ export function useUsers(rawUsers: User[]) {
   const perPage = computed<number>(() => (filters.value.perPage as number) || DEFAULT_PER_PAGE);
   const total = computed(() => filteredUsers.value.length);
   const totalPages = computed(() => Math.ceil(total.value / perPage.value));
+  const isDataEmpty = computed(() => total.value === 0);
 
   const setPage = (value: number) => {
     page.value = value;
@@ -178,8 +179,9 @@ export function useUsers(rawUsers: User[]) {
   return {
     page,
     perPage,
-    totalPages,
     total,
+    totalPages,
+    isDataEmpty,
     filtersData,
     filters,
     filteredUsers,
