@@ -29,7 +29,10 @@ export const useTable = (users: MaybeRefOrGetter<User[]>) => {
   const tableBody = computed(() => {
     return toValue(users).map(user => {
       return tableHead.map(head => ({
-        name: user[head.slug as keyof User],
+        name:
+          head.slug === "createdAt"
+            ? new Date(user[head.slug as keyof User]).toLocaleDateString()
+            : user[head.slug as keyof User],
         slug: head.slug,
       }));
     });
