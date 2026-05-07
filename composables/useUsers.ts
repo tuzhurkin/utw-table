@@ -194,50 +194,31 @@ export function useUsers(rawUsers: User[]) {
   });
 
   const loadQueryParams = () => {
+    isQueryLoaded = false;
     const query = route.query;
 
-    if (query.sort) {
-      const sortParam = String(query.sort);
-      if (sortParam) {
-        const [sortByParam, sortDirectionParam] = sortParam.split(":");
-        if (sortByParam && ["age", "createdAt"].includes(sortByParam)) {
-          sortBy.value = sortByParam as SortBy;
-        } else {
-          sortBy.value = "";
-        }
-        if (sortDirectionParam && ["asc", "desc"].includes(sortDirectionParam)) {
-          sortDirection.value = sortDirectionParam as SortDirection;
-        } else {
-          sortDirection.value = "asc";
-        }
-      }
-    }
-    if (query.role) {
-      const roleParam = String(query.role);
-      if (roleParam && ["admin", "manager", "user"].includes(roleParam)) {
-        filtersData.value.find(f => f.idx === "role")!.value = roleParam;
-      }
-    }
-    if (query.search) {
-      const searchParam = String(query.search);
-      if (searchParam) {
-        filtersData.value.find(f => f.idx === "name")!.value = searchParam;
-      }
-    }
-    if (query.perPage) {
-      const perPageParam = parseInt(String(query.perPage), 10);
-      if (!isNaN(perPageParam) && [10, 15, 20].includes(perPageParam)) {
-        filtersData.value.find(f => f.idx === "perPage")!.value = perPageParam;
-      }
-    }
-    if (query.page) {
-      const pageParam = parseInt(String(query.page), 10);
-      if (!isNaN(pageParam) && pageParam > 0 && pageParam <= totalPages.value) {
-        page.value = pageParam;
-      } else {
-        page.value = defaultPage;
-      }
-    }
+    const [sortByParam = "", sortDirectionParam = ""] = String(query.sort || "").split(":");
+    sortBy.value = ["age", "createdAt"].includes(sortByParam) ? (sortByParam as SortBy) : "";
+    sortDirection.value = ["asc", "desc"].includes(sortDirectionParam)
+      ? (sortDirectionParam as SortDirection)
+      : "asc";
+
+    const roleParam = String(query.role || "");
+    filtersData.value.find(f => f.idx === "role")!.value = ["admin", "manager", "user"].includes(
+      roleParam
+    )
+      ? roleParam
+      : "";
+
+    filtersData.value.find(f => f.idx === "name")!.value = String(query.search || "");
+
+    const perPageParam = parseInt(String(query.perPage), 10);
+    filtersData.value.find(f => f.idx === "perPage")!.value =
+      !isNaN(perPageParam) && [10, 15, 20].includes(perPageParam) ? perPageParam : defaultPerPage;
+
+    const pageParam = parseInt(String(query.page), 10);
+    page.value =
+      !isNaN(pageParam) && pageParam > 0 && pageParam <= totalPages.value ? pageParam : defaultPage;
 
     nextTick(() => {
       isQueryLoaded = true;
@@ -246,6 +227,12 @@ export function useUsers(rawUsers: User[]) {
 
   let isQueryLoaded = false;
   loadQueryParams();
+  watch(
+    () => route.query,
+    () => {
+      loadQueryParams();
+    }
+  );
 
   return {
     page,
