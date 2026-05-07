@@ -38,7 +38,7 @@ import type {
 type BaseSelectProps = {
   idx: string;
   name: string;
-  modelValue: BaseSelectValue;
+  modelValue: BaseSelectValue | null;
   placeholder: string;
   options?: BaseSelectOption[];
   disabled?: boolean;

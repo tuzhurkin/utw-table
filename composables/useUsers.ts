@@ -1,5 +1,15 @@
-import type { SortBy, SortDirection } from "~/types/table";
-import type { User, Filter, Filters } from "~/types/table";
+import type { SortBy, SortDirection, User, Filter, Filters } from "~/types/table";
+import { normalizeFilterOptions, isOneOf } from "~/utils";
+import {
+  DEFAULT_PAGE,
+  DEFAULT_PER_PAGE,
+  PER_PAGE_OPTIONS,
+  ROLE_OPTIONS,
+  SEARCH_OPTIONS,
+  SORT_BY_OPTIONS,
+  SORT_DIRECTION,
+  USER_FILTER_OPTIONS,
+} from "~/constants/options";
 
 export function useUsers(rawUsers: User[]) {
   const route = useRoute();
@@ -14,8 +24,8 @@ export function useUsers(rawUsers: User[]) {
   );
 
   // pagination
-  const defaultPage = 1;
-  const defaultPerPage = 10;
+  const defaultPage = DEFAULT_PAGE;
+  const defaultPerPage = DEFAULT_PER_PAGE;
   const page = ref(defaultPage);
   const perPage = computed<number>(() => (filters.value.perPage as number) || defaultPerPage);
   const total = computed(() => filteredUsers.value.length);
@@ -36,7 +46,7 @@ export function useUsers(rawUsers: User[]) {
       name: "name",
       placeholder: "Search by name or email",
       filterType: "search",
-      searchFields: ["name", "email"],
+      searchFields: SEARCH_OPTIONS,
     },
     {
       value: "",
@@ -44,20 +54,7 @@ export function useUsers(rawUsers: User[]) {
       name: "role",
       placeholder: "Select role",
       filterType: "select",
-      options: [
-        {
-          value: "admin",
-          text: "Admin",
-        },
-        {
-          value: "manager",
-          text: "Manager",
-        },
-        {
-          value: "user",
-          text: "User",
-        },
-      ],
+      options: normalizeFilterOptions(ROLE_OPTIONS),
     },
     {
       value: defaultPerPage,
@@ -65,11 +62,7 @@ export function useUsers(rawUsers: User[]) {
       name: "perPage",
       placeholder: `Show ${defaultPerPage}`,
       filterType: "select",
-      options: [
-        { value: 10, text: 10 },
-        { value: 15, text: 15 },
-        { value: 20, text: 20 },
-      ],
+      options: normalizeFilterOptions(PER_PAGE_OPTIONS),
       triggerText: "Show",
     },
   ]);
@@ -81,15 +74,13 @@ export function useUsers(rawUsers: User[]) {
     }, {} as Filters);
   });
 
-  const USER_FILTER_KEYS = new Set<keyof User>(["name", "email", "age", "role", "createdAt"]);
-
   const filteredUsers = computed<User[]>(() => {
     return users.value.filter((user: User) => {
       return Object.entries(filters.value).every(([key, value]) => {
         if (!value) return true;
 
         // skip filters that are not user data fields (perPage)
-        if (!USER_FILTER_KEYS.has(key as keyof User)) return true;
+        if (!isOneOf(USER_FILTER_OPTIONS, key)) return true;
 
         const filterItem = filtersData.value.find(f => f.idx === key);
 
@@ -198,15 +189,13 @@ export function useUsers(rawUsers: User[]) {
     const query = route.query;
 
     const [sortByParam = "", sortDirectionParam = ""] = String(query.sort || "").split(":");
-    sortBy.value = ["age", "createdAt"].includes(sortByParam) ? (sortByParam as SortBy) : "";
-    sortDirection.value = ["asc", "desc"].includes(sortDirectionParam)
+    sortBy.value = isOneOf(SORT_BY_OPTIONS, sortByParam) ? (sortByParam as SortBy) : "";
+    sortDirection.value = isOneOf(SORT_DIRECTION, sortDirectionParam)
       ? (sortDirectionParam as SortDirection)
       : "asc";
 
     const roleParam = String(query.role || "");
-    filtersData.value.find(f => f.idx === "role")!.value = ["admin", "manager", "user"].includes(
-      roleParam
-    )
+    filtersData.value.find(f => f.idx === "role")!.value = isOneOf(ROLE_OPTIONS, roleParam)
       ? roleParam
       : "";
 
@@ -214,7 +203,9 @@ export function useUsers(rawUsers: User[]) {
 
     const perPageParam = parseInt(String(query.perPage), 10);
     filtersData.value.find(f => f.idx === "perPage")!.value =
-      !isNaN(perPageParam) && [10, 15, 20].includes(perPageParam) ? perPageParam : defaultPerPage;
+      !isNaN(perPageParam) && isOneOf(PER_PAGE_OPTIONS, perPageParam)
+        ? perPageParam
+        : defaultPerPage;
 
     const pageParam = parseInt(String(query.page), 10);
     page.value =

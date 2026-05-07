@@ -41,17 +41,17 @@ export type BaseSearch = {
 };
 
 // select types
-export type BaseSelectValue = string | number | null;
+export type BaseSelectValue = string | number;
 export type BaseSelectOption = {
   value: BaseSelectValue;
-  text: string | number;
+  text: BaseSelectValue;
 };
 export type OptionValue = BaseSelectOption["value"];
 export type BaseSelectDirection = "bottom" | "top";
 export type BaseSelect = {
   idx: string;
   name: string;
-  modelValue: BaseSelectValue;
+  modelValue: BaseSelectValue | null;
   placeholder: string;
   disabled: boolean;
   options: BaseSelectOption[];

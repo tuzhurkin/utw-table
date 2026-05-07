@@ -1,3 +1,5 @@
+import type { BaseSelectValue, BaseSelectOption } from "./base";
+
 export type SortBy = "age" | "createdAt";
 export type SortDirection = "asc" | "desc";
 
@@ -36,16 +38,13 @@ export type Pagination = {
 };
 
 export type Filter = {
-  value: string | number;
+  value: BaseSelectValue;
   idx: string;
   name: string;
   placeholder: string;
   filterType: "search" | "select";
   searchFields?: string[];
-  options?: {
-    value: string | number;
-    text: string | number;
-  }[];
+  options?: BaseSelectOption[];
   triggerText?: string;
 };
 
