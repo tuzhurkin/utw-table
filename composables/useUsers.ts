@@ -1,4 +1,5 @@
-import type { SortBy, SortDirection, User, Filter, Filters } from "~/types/table";
+import type { LocationQuery } from "vue-router";
+import type { SortBy, SortDirection, User, Filter, Filters, Query } from "~/types/table";
 import { normalizeFilterOptions, isOneOf } from "~/utils";
 import {
   DEFAULT_PAGE,
@@ -10,11 +11,9 @@ import {
   SORT_DIRECTION,
   USER_FILTER_OPTIONS,
 } from "~/constants/options";
+import { useQuery } from "~/composables/useQuery";
 
 export function useUsers(rawUsers: User[]) {
-  const route = useRoute();
-  const router = useRouter();
-
   // users with preserved date on server and client sides
   const users = useState<User[]>("users", () =>
     rawUsers.map((user, i) => ({
@@ -24,10 +23,8 @@ export function useUsers(rawUsers: User[]) {
   );
 
   // pagination
-  const defaultPage = DEFAULT_PAGE;
-  const defaultPerPage = DEFAULT_PER_PAGE;
-  const page = ref(defaultPage);
-  const perPage = computed<number>(() => (filters.value.perPage as number) || defaultPerPage);
+  const page = ref(DEFAULT_PAGE);
+  const perPage = computed<number>(() => (filters.value.perPage as number) || DEFAULT_PER_PAGE);
   const total = computed(() => filteredUsers.value.length);
   const totalPages = computed(() => Math.ceil(total.value / perPage.value));
 
@@ -35,7 +32,7 @@ export function useUsers(rawUsers: User[]) {
     page.value = value;
   };
   const resetPage = () => {
-    page.value = defaultPage;
+    page.value = DEFAULT_PAGE;
   };
 
   // filtered users
@@ -57,10 +54,10 @@ export function useUsers(rawUsers: User[]) {
       options: normalizeFilterOptions(ROLE_OPTIONS),
     },
     {
-      value: defaultPerPage,
+      value: DEFAULT_PER_PAGE,
       idx: "perPage",
       name: "perPage",
-      placeholder: `Show ${defaultPerPage}`,
+      placeholder: `Show ${DEFAULT_PER_PAGE}`,
       filterType: "select",
       options: normalizeFilterOptions(PER_PAGE_OPTIONS),
       triggerText: "Show",
@@ -78,8 +75,6 @@ export function useUsers(rawUsers: User[]) {
     return users.value.filter((user: User) => {
       return Object.entries(filters.value).every(([key, value]) => {
         if (!value) return true;
-
-        // skip filters that are not user data fields (perPage)
         if (!isOneOf(USER_FILTER_OPTIONS, key)) return true;
 
         const filterItem = filtersData.value.find(f => f.idx === key);
@@ -88,7 +83,6 @@ export function useUsers(rawUsers: User[]) {
           return String(user[key as keyof User] || "") === String(value);
         }
 
-        // if filter type is search with multiple fields
         const searchQuery = String(value).toLowerCase();
         if (filterItem?.searchFields?.length) {
           return filterItem.searchFields.some(field =>
@@ -104,11 +98,6 @@ export function useUsers(rawUsers: User[]) {
           .includes(searchQuery);
       });
     });
-  });
-
-  watch(filters, () => {
-    if (!isQueryLoaded) return;
-    resetPage();
   });
 
   // sorted users
@@ -141,26 +130,10 @@ export function useUsers(rawUsers: User[]) {
   const end = computed(() => start.value + perPage.value);
   const paginatedUsers = computed<User[]>(() => sortedUsers.value.slice(start.value, end.value));
 
-  // query params
-  type Query = {
-    page?: number;
-    perPage?: number;
-    sort?: `${SortBy}:${SortDirection}` | "";
-    role?: string;
-    search?: string;
-  };
-
-  const defaultQuery: Query = {
-    page: defaultPage,
-    perPage: defaultPerPage,
-    sort: "",
-    role: "",
-    search: "",
-  };
-
+  // query params state
   const queryParams = computed<Query>(() => ({
-    page: page.value || defaultPage,
-    perPage: perPage.value || defaultPerPage,
+    page: page.value || DEFAULT_PAGE,
+    perPage: perPage.value || DEFAULT_PER_PAGE,
     sort: sortBy.value
       ? (`${sortBy.value}:${sortDirection.value}` as `${SortBy}:${SortDirection}`)
       : "",
@@ -168,26 +141,7 @@ export function useUsers(rawUsers: User[]) {
     search: String(filters.value.name) || "",
   }));
 
-  const setQueryParams = (params: Query) => {
-    const query: Record<string, string> = {};
-
-    Object.entries(params).forEach(([key, value]) => {
-      if (!value) return;
-      if (value === defaultQuery[key as keyof Query]) return;
-      query[key] = String(value);
-    });
-
-    router.push({ query });
-  };
-
-  watch(queryParams, (newParams: Query) => {
-    setQueryParams(newParams);
-  });
-
-  const loadQueryParams = () => {
-    isQueryLoaded = false;
-    const query = route.query;
-
+  const restoreFromQuery = (query: LocationQuery) => {
     const [sortByParam = "", sortDirectionParam = ""] = String(query.sort || "").split(":");
     sortBy.value = isOneOf(SORT_BY_OPTIONS, sortByParam) ? (sortByParam as SortBy) : "";
     sortDirection.value = isOneOf(SORT_DIRECTION, sortDirectionParam)
@@ -205,25 +159,21 @@ export function useUsers(rawUsers: User[]) {
     filtersData.value.find(f => f.idx === "perPage")!.value =
       !isNaN(perPageParam) && isOneOf(PER_PAGE_OPTIONS, perPageParam)
         ? perPageParam
-        : defaultPerPage;
+        : DEFAULT_PER_PAGE;
 
     const pageParam = parseInt(String(query.page), 10);
     page.value =
-      !isNaN(pageParam) && pageParam > 0 && pageParam <= totalPages.value ? pageParam : defaultPage;
-
-    nextTick(() => {
-      isQueryLoaded = true;
-    });
+      !isNaN(pageParam) && pageParam > 0 && pageParam <= totalPages.value
+        ? pageParam
+        : DEFAULT_PAGE;
   };
 
-  let isQueryLoaded = false;
-  loadQueryParams();
-  watch(
-    () => route.query,
-    () => {
-      loadQueryParams();
-    }
-  );
+  const { isQueryLoaded } = useQuery(queryParams, restoreFromQuery);
+
+  watch(filters, () => {
+    if (!isQueryLoaded.value) return;
+    resetPage();
+  });
 
   return {
     page,

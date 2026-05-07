@@ -51,3 +51,11 @@ export type Filter = {
 export type Filters = {
   [key: string]: Filter["value"];
 };
+
+export type Query = {
+  page?: number;
+  perPage?: number;
+  sort?: `${SortBy}:${SortDirection}` | "";
+  role?: string;
+  search?: string;
+};
