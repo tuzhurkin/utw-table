@@ -1,6 +1,6 @@
 <template>
   <div class="filters">
-    <div v-for="filter in filters" :key="filter.idx" class="filter">
+    <div v-for="filter in filters" :key="filter.idx" class="filter" :class="[filter.filterType]">
       <BaseSearch
         v-if="filter.filterType === 'search'"
         v-bind="filter"
@@ -12,7 +12,7 @@
         v-if="filter.filterType === 'select'"
         v-bind="filter"
         :model-value="filter.value"
-        @update:model-value="onRoleUpdate"
+        @update:model-value="onSelectUpdate"
       />
     </div>
   </div>
@@ -75,7 +75,7 @@ onUnmounted(() => {
   if (debounceTimer) clearTimeout(debounceTimer);
 });
 
-const onRoleUpdate = (value: BaseSelectValue, idx: string) => {
+const onSelectUpdate = (value: BaseSelectValue, idx: string) => {
   if (value === null || value === undefined) return;
 
   const filter = props.filters.find(filter => filter.idx === idx);
@@ -93,7 +93,12 @@ const onRoleUpdate = (value: BaseSelectValue, idx: string) => {
   gap: 16px;
 
   .filter {
-    flex: 1;
+    &.search {
+      flex: 2;
+    }
+    &.select {
+      flex: 1;
+    }
   }
 }
 </style>

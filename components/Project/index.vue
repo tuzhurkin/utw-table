@@ -7,14 +7,7 @@
       <ProjectTable :head="tableHead" :body="tableBody" @sort="onSorting" />
     </div>
     <div class="project-pagination">
-      <Pagination
-        :page="page"
-        :per-page="perPage"
-        :total-pages="totalPages"
-        :total="total"
-        @update:page="setPage"
-        @update:per-page="setPerPage"
-      />
+      <Pagination :page="page" :total-pages="totalPages" :total="total" @update:page="setPage" />
     </div>
   </div>
 </template>
@@ -42,7 +35,6 @@ const {
   sortDirection,
   onSorting,
   setPage,
-  setPerPage,
 } = useUsers(users);
 const { tableHead, tableBody } = useTable(paginatedUsers);
 
@@ -116,7 +108,6 @@ $color-bg-gradient: $color-grey-900;
     }
 
     .pagination {
-      width: 80%;
       margin: 0 auto;
     }
   }

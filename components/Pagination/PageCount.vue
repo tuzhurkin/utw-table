@@ -13,7 +13,7 @@
       :model-value="currentPage"
       @update:model-value="onPageChange"
     />
-    <span>of {{ totalPages }}</span>
+    <span>of {{ totalPages }} ({{ total }} users)</span>
   </label>
 </template>
 
@@ -27,12 +27,14 @@ defineOptions({
 type PageCountProps = {
   currentPage: number;
   totalPages: number;
+  total: number;
   disabled: boolean;
 };
 
 withDefaults(defineProps<PageCountProps>(), {
   currentPage: 1,
   totalPages: 1,
+  total: 0,
   disabled: false,
 });
 

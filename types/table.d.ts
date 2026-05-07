@@ -30,7 +30,7 @@ export type User = {
 
 export type Pagination = {
   page: number;
-  perPage: number;
+  perPage?: number;
   totalPages: number;
   total: number;
 };
@@ -46,6 +46,7 @@ export type Filter = {
     value: string | number;
     text: string | number;
   }[];
+  triggerText?: string;
 };
 
 export type Filters = {

@@ -17,7 +17,7 @@ export function useUsers(rawUsers: User[]) {
   const defaultPage = 1;
   const defaultPerPage = 10;
   const page = ref(defaultPage);
-  const perPage = ref(defaultPerPage);
+  const perPage = computed<number>(() => (filters.value.perPage as number) || defaultPerPage);
   const total = computed(() => filteredUsers.value.length);
   const totalPages = computed(() => Math.ceil(total.value / perPage.value));
 
@@ -26,14 +26,6 @@ export function useUsers(rawUsers: User[]) {
   };
   const resetPage = () => {
     page.value = defaultPage;
-  };
-  const setPerPage = (value: number) => {
-    perPage.value = value;
-    resetPage();
-  };
-  const resetPerPage = () => {
-    perPage.value = defaultPerPage;
-    resetPage();
   };
 
   // filtered users
@@ -67,6 +59,19 @@ export function useUsers(rawUsers: User[]) {
         },
       ],
     },
+    {
+      value: defaultPerPage,
+      idx: "perPage",
+      name: "perPage",
+      placeholder: `Show ${defaultPerPage}`,
+      filterType: "select",
+      options: [
+        { value: 10, text: 10 },
+        { value: 15, text: 15 },
+        { value: 20, text: 20 },
+      ],
+      triggerText: "Show",
+    },
   ]);
 
   const filters = computed<Filters>(() => {
@@ -76,13 +81,18 @@ export function useUsers(rawUsers: User[]) {
     }, {} as Filters);
   });
 
+  const USER_FILTER_KEYS = new Set<keyof User>(["name", "email", "age", "role", "createdAt"]);
+
   const filteredUsers = computed<User[]>(() => {
     return users.value.filter((user: User) => {
       return Object.entries(filters.value).every(([key, value]) => {
         if (!value) return true;
 
-        // if filter type is select
+        // skip filters that are not user data fields (perPage)
+        if (!USER_FILTER_KEYS.has(key as keyof User)) return true;
+
         const filterItem = filtersData.value.find(f => f.idx === key);
+
         if (filterItem?.filterType === "select") {
           return String(user[key as keyof User] || "") === String(value);
         }
@@ -106,6 +116,7 @@ export function useUsers(rawUsers: User[]) {
   });
 
   watch(filters, () => {
+    if (!isQueryLoaded) return;
     resetPage();
   });
 
@@ -185,22 +196,6 @@ export function useUsers(rawUsers: User[]) {
   const loadQueryParams = () => {
     const query = route.query;
 
-    if (query.page) {
-      const pageParam = parseInt(String(query.page), 10);
-      if (!isNaN(pageParam) && pageParam > 0) {
-        page.value = pageParam;
-      } else {
-        page.value = defaultPage;
-      }
-    }
-    if (query.perPage) {
-      const perPageParam = parseInt(String(query.perPage), 10);
-      if (!isNaN(perPageParam) && perPageParam > 0) {
-        perPage.value = perPageParam;
-      } else {
-        perPage.value = defaultPerPage;
-      }
-    }
     if (query.sort) {
       const sortParam = String(query.sort);
       if (sortParam) {
@@ -229,8 +224,27 @@ export function useUsers(rawUsers: User[]) {
         filtersData.value.find(f => f.idx === "name")!.value = searchParam;
       }
     }
+    if (query.perPage) {
+      const perPageParam = parseInt(String(query.perPage), 10);
+      if (!isNaN(perPageParam) && [10, 15, 20].includes(perPageParam)) {
+        filtersData.value.find(f => f.idx === "perPage")!.value = perPageParam;
+      }
+    }
+    if (query.page) {
+      const pageParam = parseInt(String(query.page), 10);
+      if (!isNaN(pageParam) && pageParam > 0 && pageParam <= totalPages.value) {
+        page.value = pageParam;
+      } else {
+        page.value = defaultPage;
+      }
+    }
+
+    nextTick(() => {
+      isQueryLoaded = true;
+    });
   };
 
+  let isQueryLoaded = false;
   loadQueryParams();
 
   return {
@@ -247,7 +261,6 @@ export function useUsers(rawUsers: User[]) {
     sortDirection,
     onSorting,
     setPage,
-    setPerPage,
     queryParams,
   };
 }
