@@ -2,7 +2,7 @@
   <div
     v-on-click-outside="onClickOutside"
     class="select"
-    :class="[{ active: open, focused, disabled }, direction]"
+    :class="[{ default: isDefault, active: open, focused, disabled }]"
   >
     <div class="trigger" :tabindex="disabled ? -1 : 0" @click="toggle">
       <span class="value">{{ displayValue }}</span>
@@ -11,6 +11,13 @@
     <Transition name="options">
       <div v-show="open" class="options-box">
         <ul class="options">
+          <li
+            v-if="showAllOption"
+            class="option all"
+            @click="selectOption({ value: null, text: showAllOption })"
+          >
+            {{ showAllOption }}
+          </li>
           <li
             v-for="option in options"
             :key="option.value ?? undefined"
@@ -28,23 +35,18 @@
 
 <script setup lang="ts">
 import { vOnClickOutside } from "@vueuse/components";
-import type {
-  BaseSelectValue,
-  BaseSelectOption,
-  OptionValue,
-  BaseSelectDirection,
-} from "~/types/base";
+import type { BaseSelectValue, BaseSelectOption, OptionValue } from "~/types/base";
 
 type BaseSelectProps = {
   idx: string;
   name: string;
-  modelValue: BaseSelectValue | null;
-  placeholder: string;
-  options?: BaseSelectOption[];
+  modelValue: BaseSelectValue;
+  options: BaseSelectOption[];
+  placeholder?: string;
   disabled?: boolean;
   focused?: boolean;
   triggerText?: string;
-  direction?: BaseSelectDirection;
+  showAllOption?: string | null;
 };
 
 defineOptions({
@@ -54,13 +56,13 @@ defineOptions({
 const props = withDefaults(defineProps<BaseSelectProps>(), {
   idx: "",
   name: "",
+  modelValue: null,
+  options: () => [],
   placeholder: "",
   disabled: false,
-  options: () => [],
-  modelValue: null,
   focused: false,
   triggerText: "",
-  direction: "bottom",
+  showAllOption: null,
 });
 
 const emit = defineEmits<{
@@ -73,6 +75,10 @@ const open = ref(false);
 const isSelected = (value: OptionValue) => {
   return props.modelValue === value;
 };
+
+const isDefault = computed(() => {
+  return props.modelValue === null;
+});
 
 const displayValue = computed(() => {
   if (!props.modelValue) return props.placeholder || "";
@@ -158,6 +164,23 @@ const selectOption = (option: BaseSelectOption) => {
   &.disabled {
     pointer-events: none;
     opacity: 0.5;
+  }
+
+  &.default {
+    .trigger {
+      .value {
+        color: $color-grey-500;
+      }
+    }
+    .options-box {
+      .options {
+        .option {
+          &.all {
+            color: $color-grey-500;
+          }
+        }
+      }
+    }
   }
 
   &.top {

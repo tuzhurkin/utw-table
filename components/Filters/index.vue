@@ -3,14 +3,21 @@
     <div v-for="filter in filters" :key="filter.idx" class="filter" :class="[filter.filterType]">
       <BaseSearch
         v-if="filter.filterType === 'search'"
-        v-bind="filter"
+        :idx="filter.idx"
+        :name="filter.name"
+        :placeholder="filter.placeholder"
         :model-value="searchInput"
         :loading="isSearching"
         @update:model-value="onSearchInput"
       />
       <BaseSelect
         v-if="filter.filterType === 'select'"
-        v-bind="filter"
+        :idx="filter.idx"
+        :name="filter.name"
+        :placeholder="filter.placeholder"
+        :options="filter.options"
+        :trigger-text="filter.triggerText"
+        :show-all-option="filter.showAllOption"
         :model-value="filter.value"
         @update:model-value="onSelectUpdate"
       />
@@ -45,10 +52,12 @@ const searchFilter = computed(() => props.filters.find(f => f.filterType === "se
 const { searchInput, isSearching, onSearchInput } = useSearchDebounce(searchFilter);
 
 const onSelectUpdate = (value: BaseSelectValue, idx: string) => {
-  if (value === null || value === undefined) return;
-
   const filter = props.filters.find(filter => filter.idx === idx);
-  if (filter && filter.options) {
+  if (filter && filter.filterType === "select") {
+    if (value === null) {
+      filter.value = value;
+      return;
+    }
     const option = filter.options.find(option => option.value === value);
     if (option) filter.value = option.value;
   }

@@ -1,25 +1,23 @@
 <template>
   <div class="pagination">
-    <div class="controls">
-      <div class="part arrow">
-        <BaseButton
-          type="texted"
-          icon="chevron-left"
-          :disabled="isPrevDisabled"
-          @click="onPrevClick"
-        />
-      </div>
-      <div class="part count" :class="{ disabled: total === 0 }">
-        <span>{{ page }} / {{ totalPages }}</span>
-      </div>
-      <div class="part arrow">
-        <BaseButton
-          type="texted"
-          icon="chevron-right"
-          :disabled="isNextDisabled"
-          @click="onNextClick"
-        />
-      </div>
+    <div class="part arrow">
+      <BaseButton
+        type="texted"
+        icon="chevron-left"
+        :disabled="isPrevDisabled"
+        @click="onPrevClick"
+      />
+    </div>
+    <div class="part count" :class="{ disabled: total === 0 }">
+      <span>{{ page }} / {{ totalPages }}</span>
+    </div>
+    <div class="part arrow">
+      <BaseButton
+        type="texted"
+        icon="chevron-right"
+        :disabled="isNextDisabled"
+        @click="onNextClick"
+      />
     </div>
   </div>
 </template>
@@ -35,15 +33,10 @@ type PaginationProps = {
   total: number;
 };
 
-const props = withDefaults(defineProps<PaginationProps>(), {
-  page: 1,
-  totalPages: 1,
-  total: 0,
-});
+const props = defineProps<PaginationProps>();
 
 const emit = defineEmits<{
   "update:page": [value: number];
-  reload: [];
 }>();
 
 const isPrevDisabled = computed(() => props.page === 1 || props.total === 0);
@@ -67,33 +60,26 @@ const onNextClick = () => {
   background-color: $color-grey-700;
   border-radius: 50px;
 
-  .controls {
+  .part {
+    position: relative;
     display: flex;
     align-items: center;
-    gap: 12px;
-    width: 100%;
+    gap: 8px;
+    transition: opacity $transition ease;
 
-    .part {
-      position: relative;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: opacity $transition ease;
+    .btn {
+      min-width: 36px;
+      min-height: 36px;
 
-      .btn {
-        min-width: 36px;
-        min-height: 36px;
-
-        :deep(.icon) {
-          width: 28px;
-          height: 28px;
-        }
+      :deep(.icon) {
+        width: 28px;
+        height: 28px;
       }
+    }
 
-      &.disabled {
-        opacity: 0.5;
-        pointer-events: none;
-      }
+    &.disabled {
+      opacity: 0.5;
+      pointer-events: none;
     }
   }
 }

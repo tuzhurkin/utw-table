@@ -1,16 +1,9 @@
 // button types
-export type BaseButtonType = "primary" | "primary yellow" | "texted" | "icony";
 export type BaseButton = {
-  tag?: string;
-  tagType?: string;
-  type?: BaseButtonType;
+  type?: string;
   text?: string | number | null;
-  to?: string | object | null;
-  href?: string | null;
-  target?: string | null;
-  disabled?: boolean;
-  iconBefore?: string | null;
   icon?: string | null;
+  disabled?: boolean;
 };
 
 // input types
@@ -19,43 +12,38 @@ export type BaseInputType = "text" | "number";
 export type BaseInput = {
   idx: string;
   name: string;
-  type: BaseInputType;
   modelValue: BaseInputValue;
-  placeholder: string;
-  autocomplete: string;
-  disabled: boolean;
-  min?: number;
-  max?: number;
+  type?: BaseInputType;
+  placeholder?: string;
+  disabled?: boolean;
 };
 
 // search types
 export type BaseSearch = {
   idx: string;
   name: string;
-  type?: BaseInputType;
   modelValue: BaseInputValue;
-  placeholder: string;
-  autocomplete?: string;
+  type?: BaseInputType;
+  placeholder?: string;
   disabled?: boolean;
   loading?: boolean;
 };
 
 // select types
-export type BaseSelectValue = string | number;
+export type BaseSelectValue = string | number | null;
 export type BaseSelectOption = {
   value: BaseSelectValue;
   text: BaseSelectValue;
 };
 export type OptionValue = BaseSelectOption["value"];
-export type BaseSelectDirection = "bottom" | "top";
 export type BaseSelect = {
   idx: string;
   name: string;
-  modelValue: BaseSelectValue | null;
-  placeholder: string;
-  disabled: boolean;
+  modelValue: BaseSelectValue;
   options: BaseSelectOption[];
-  focused: boolean;
-  triggerText: string;
-  direction: BaseSelectDirection;
+  placeholder?: string;
+  disabled?: boolean;
+  focused?: boolean;
+  triggerText?: string;
+  showAllOption?: string | null;
 };

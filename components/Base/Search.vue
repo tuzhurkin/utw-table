@@ -3,8 +3,6 @@
     <BaseInput
       :idx="idx"
       :name="name"
-      :type="type"
-      :autocomplete="autocomplete"
       :placeholder="placeholder"
       :disabled="disabled"
       :model-value="modelValue"
@@ -29,10 +27,9 @@ import type { BaseInputValue, BaseInputType } from "~/types/base";
 type BaseSearchProps = {
   idx: string;
   name: string;
-  type?: BaseInputType;
   modelValue: BaseInputValue;
-  placeholder: string;
-  autocomplete?: string;
+  type?: BaseInputType;
+  placeholder?: string;
   disabled?: boolean;
   loading?: boolean;
 };
@@ -44,10 +41,9 @@ defineOptions({
 const props = withDefaults(defineProps<BaseSearchProps>(), {
   idx: "",
   name: "",
-  type: "text",
   modelValue: null,
+  type: "text",
   placeholder: "",
-  autocomplete: "off",
   disabled: false,
   loading: false,
 });

@@ -1,7 +1,4 @@
-import type { BaseSelectValue, BaseSelectOption } from "./base";
-
-export type SortBy = "age" | "createdAt";
-export type SortDirection = "asc" | "desc";
+import type { BaseInputValue, BaseSelectValue, BaseSelectOption } from "./base";
 
 export type TableCell = {
   name: string | number;
@@ -21,6 +18,8 @@ export type TableData = {
 };
 
 export type Role = "admin" | "manager" | "user";
+export type SortBy = "age" | "createdAt";
+export type SortDirection = "asc" | "desc";
 
 export type User = {
   id: number;
@@ -38,16 +37,27 @@ export type Pagination = {
   total: number;
 };
 
-export type Filter = {
-  value: BaseSelectValue;
+type FilterBase = {
   idx: string;
   name: string;
-  placeholder: string;
-  filterType: "search" | "select";
-  searchFields?: string[];
-  options?: BaseSelectOption[];
-  triggerText?: string;
+  placeholder?: string;
 };
+
+export type SearchFilter = FilterBase & {
+  filterType: "search";
+  value: BaseInputValue;
+  searchFields?: string[];
+};
+
+export type SelectFilter = FilterBase & {
+  filterType: "select";
+  value: BaseSelectValue;
+  options: BaseSelectOption[];
+  triggerText?: string;
+  showAllOption?: string | null;
+};
+
+export type Filter = SearchFilter | SelectFilter;
 
 export type Filters = {
   [key: string]: Filter["value"];

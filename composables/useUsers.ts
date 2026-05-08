@@ -51,12 +51,13 @@ export function useUsers(rawUsers: User[]) {
       searchFields: SEARCH_OPTIONS,
     },
     {
-      value: "",
+      value: null,
       idx: "role",
       name: "role",
       placeholder: "Select role",
       filterType: "select",
       options: normalizeFilterOptions(ROLE_OPTIONS),
+      showAllOption: "All",
     },
   ]);
 
@@ -97,14 +98,14 @@ export function useUsers(rawUsers: User[]) {
   });
 
   // sorted users
-  const sortBy = ref<string>("");
+  const sortBy = ref<SortBy | "">("");
   const sortDirection = ref<SortDirection>("asc");
 
   const onSorting = (slug: string) => {
     if (sortBy.value === slug) {
       sortDirection.value = sortDirection.value === "asc" ? "desc" : "asc";
     } else {
-      sortBy.value = slug;
+      sortBy.value = slug as SortBy;
       sortDirection.value = "asc";
     }
   };
@@ -133,7 +134,7 @@ export function useUsers(rawUsers: User[]) {
     sort: sortBy.value
       ? (`${sortBy.value}:${sortDirection.value}` as `${SortBy}:${SortDirection}`)
       : "",
-    role: String(filters.value.role) || "",
+    role: typeof filters.value.role === "string" ? filters.value.role : "",
     search: String(filters.value.name) || "",
   }));
 
@@ -145,11 +146,15 @@ export function useUsers(rawUsers: User[]) {
       : "asc";
 
     const roleParam = String(query.role || "");
-    filtersData.value.find(f => f.idx === "role")!.value = isOneOf(ROLE_OPTIONS, roleParam)
-      ? roleParam
-      : "";
+    const roleFilter = filtersData.value.find(f => f.idx === "role");
+    if (roleFilter) {
+      roleFilter.value = isOneOf(ROLE_OPTIONS, roleParam) ? roleParam : null;
+    }
 
-    filtersData.value.find(f => f.idx === "name")!.value = String(query.search || "");
+    const nameFilter = filtersData.value.find(f => f.idx === "name");
+    if (nameFilter) {
+      nameFilter.value = String(query.search || "");
+    }
 
     const perPageParam = parseInt(String(query.perPage), 10);
     perPage.value =

@@ -63,6 +63,10 @@ td {
     padding: 0 24px 0 16px;
   }
 
+  &:only-child {
+    padding: 0 24px;
+  }
+
   &:not(:last-child) {
     &:after {
       content: "";
@@ -88,6 +92,19 @@ th {
     position: relative;
     padding-right: 40px;
     cursor: pointer;
+    transition: color $transition ease;
+
+    @include hover {
+      color: $color-white;
+
+      .icon {
+        svg {
+          path {
+            stroke: $color-white;
+          }
+        }
+      }
+    }
 
     .icon {
       position: absolute;
@@ -105,6 +122,10 @@ th {
         width: 18px !important;
         height: 18px !important;
         transition: transform 0.3s ease;
+
+        path {
+          transition: stroke 0.3s ease;
+        }
       }
 
       &.active {

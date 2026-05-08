@@ -1,4 +1,4 @@
-import type { BaseSelectOption, BaseSelectValue } from "~/types/base";
+import type { BaseSelectValue, BaseSelectOption } from "~/types/base";
 
 const isOptionObject = (option: BaseSelectOption | BaseSelectValue): option is BaseSelectOption =>
   typeof option === "object";

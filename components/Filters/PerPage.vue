@@ -36,6 +36,7 @@ const perPageFilter = {
   filterType: "select",
   options: normalizeFilterOptions(PER_PAGE_OPTIONS),
   triggerText: "Show",
+  showAllOption: null,
 };
 </script>
 
